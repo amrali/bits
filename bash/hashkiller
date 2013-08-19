@@ -1,0 +1,88 @@
+#!/bin/bash
+ ###########################################################################
+ #   Copyright (C) 2009 by Amr Ali                                         #
+ #   amr.ali.cc@gmail.com                                                  #
+ #                                                                         #
+ #   All rights reserved.                                                  #
+ #                                                                         #
+ #   Redistribution and use in source and binary forms,                    #
+ #   with or without modification, are permitted provided that             #
+ #   the following conditions are met:                                     #
+ #     * Redistributions of source code                                    #
+ #       must retain the above copyright notice,                           #
+ #       this list of conditions and the following disclaimer.             #
+ #     * Redistributions in binary form must reproduce                     #
+ #       the above copyright notice, this list of conditions               #
+ #       and the following disclaimer in the documentation and/or          #
+ #       other materials provided with the distribution.                   #
+ #     * Neither the name of the <ORGANIZATION> nor the names of its       #
+ #       contributors may be used to endorse or promote products derived   #
+ #       from this software without specific prior written permission.     #
+ #                                                                         #
+ #   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS   #
+ #   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT     #
+ #   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR #
+ #   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT  #
+ #   OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, #
+ #   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT      #
+ #   LIMITED TO PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,  #
+ #   DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY #
+ #   THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT   #
+ #   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE #
+ #   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  #
+ ###########################################################################
+
+showhelp() {
+	printf "This program is under the 3-clause BSD license.\n"
+	printf "USAGE: $0 <MD5 Hash>\n\n"
+	printf "<MD5 Hash>          Any valid MD5 hash.\n\n"
+	printf "Examples:\n"
+	printf "$0 56d78511f750c33359a11f8f5c7e62c9\n"
+}
+
+checkmd5() {
+	if [[ ${1} =~ [A-Fa-f0-9]{32} ]]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+checkargs() {
+	if [ "${1}" = "-h" ]; then		# Checking if '-h' was used.
+		showhelp
+		return 1
+	fi
+
+	if [ $# -ne 1 ]; then			# Checking if the necessary arguments are supplied.
+		printf "Please try '$0 -h' for more information.\n"
+		return 1
+	fi
+
+	checkmd5 ${1}
+
+	if [ $? -eq 1 ]; then
+		printf "Invalid MD5 hash!\n"
+		return 1
+	fi
+}
+
+# Checking arguments.
+checkargs ${1}
+[ $? -eq 1 ] && exit 1
+
+# Assigning arguments to variable to enhance readability.
+hash=${1}
+
+# Looking up the hash using the hashkiller.com API.
+tmpfile="/tmp/hashkiller.tmp"
+wget -qO ${tmpfile} http://hashkiller.com/api/api.php?md5=${hash}
+found=`grep "<found>" ${tmpfile} | sed -e 's/ <found>//g' | sed -e 's/<\/found>\r//g'`
+plain=`grep "<plain>" ${tmpfile} | sed -e 's/ <plain>//g' | sed -e 's/<\/plain>\r//g'`
+rm /tmp/hashkiller.tmp
+
+if [ ${found} = "true" ]; then
+	printf "Hash found: ${plain}\n"
+else
+	printf "Hash not found.\n"
+fi

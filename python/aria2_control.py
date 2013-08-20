@@ -30,7 +30,7 @@ class ControlFile(object):
         buf = StringIO.StringIO(self._data)
         self.fields['VERSION'] = struct.unpack(">H", buf.read(2))[0]
         ext = struct.unpack(">I", buf.read(4))[0]
-        self.fields['EXTENSION'] = "InfoHashCheck" if ext & 1 else "nil"
+        self.fields['EXTENSION'] = "InfoHashCheck" if ext & 1 else None
         ihl = self.fields['INFO_HASH_LENGTH'] = struct.unpack(">I", buf.read(4))[0]
         self.fields['INFO_HASH'] = struct.unpack(">{}B".format(ihl),
                 buf.read(ihl))

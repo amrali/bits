@@ -7,6 +7,10 @@ func main() {
 	f := createFile("/tmp/defer.txt")
 	defer closeFile(f)
 	writeFile(f)
+
+	for i:= 0; i < 4; i++ {
+		defer fmt.Println(i)
+	}
 }
 
 func createFile(p string) *os.File {

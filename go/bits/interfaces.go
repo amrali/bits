@@ -1,6 +1,7 @@
 package main
 
 import "fmt"
+import "reflect"
 
 func PrintAll(vals []interface{}) {
 	for _, val := range vals {
@@ -15,5 +16,6 @@ func main() {
 		vals[i] = v
 	}
 	PrintAll(vals)
+	fmt.Println(reflect.ValueOf(&names).Elem().Interface())
 }
 

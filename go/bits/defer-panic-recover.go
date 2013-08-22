@@ -5,6 +5,7 @@ import "fmt"
 func main() {
 	f()
 	fmt.Println("Returned normally from f.")
+	println(d())
 }
 
 func f() {
@@ -28,5 +29,12 @@ func g(i int) {
 	defer fmt.Println("Defer in g", i)
 	fmt.Println("Printing in g", i)
 	g(i + 1)
+}
+
+func d() (status string) {
+	defer func() {
+		status = recover().(string)
+	}()
+	panic("Engine Failed")
 }
 

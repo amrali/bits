@@ -1,0 +1,7 @@
+#!/bin/bash
+
+FILENAME="$1"
+
+[ "x${FILENAME}" == "x" ] && echo "must supply a regex as first argument" && exit 1
+git filter-branch --tag-name-filter cat --index-filter 'git rm -r --cached --ignore-unmatch ${FILENAME}' --prune-empty -f -- --all
+

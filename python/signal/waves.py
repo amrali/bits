@@ -7,6 +7,9 @@ from itertools import izip, repeat
 from collections import Iterable
 
 def wave_gen(freq, amplitude=1, sample_rate=4.41e4):
+    """\
+    A sinusoidal wave generator
+    """
     d = 0
     phase_delta = 2 * pi * freq / sample_rate
     while True:
@@ -14,6 +17,9 @@ def wave_gen(freq, amplitude=1, sample_rate=4.41e4):
         d += phase_delta
 
 def frame_gen(samples=100, *wave_gens):
+    """\
+    A wave frame generator
+    """
     waves = izip(*wave_gens)
     while samples > 0:
         yield sum(waves.next())

@@ -1,0 +1,6 @@
+{
+    "name": "Low Voltage 380v",
+    "tariff": [
+        [[1, -1], 90]
+    ]
+}
